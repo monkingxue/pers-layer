@@ -1,0 +1,11 @@
+{
+  "module": "User",
+  "method": "findOne",
+  "param": [
+    {
+      "where": {
+        "id": 1
+      }
+    }
+  ]
+}

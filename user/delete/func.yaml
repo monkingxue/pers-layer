@@ -1,0 +1,6 @@
+version: 0.0.26
+runtime: node
+entrypoint: node func.js
+headers:
+  content-type:
+  - application/json

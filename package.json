@@ -1,0 +1,20 @@
+{
+  "name": "pers-layer",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "db:run": "docker run --name=mysql -p 3306:3306 -v $PWD/data/mysql/data:/var/lib/mysql --env-file .db.env -d mysql && npm run db:ip",
+    "db:stop": "docker stop mysql && docker rm mysql && rm .ip.env",
+    "db:ip": "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mysql > .ip.env",
+    "server": "echo 'FN_DB_URL=mysql://yy:password@tcp('$(cat .ip.env)':3306)/database' > .server.env && fn_mac start --env-file .server.env",
+    "ui": "docker run --rm -it --link fnserver:api -p 4000:4000 -e FN_API_URL=http://api:8080 -d fnproject/ui",
+    "set-config": "./config.sh",
+    "dev": "npm run set-config && fn_mac deploy --all --local",
+    "deploy": "npm run set-config && fn_mac deploy --all --registry monkingxue",
+    "test": "npm run db:ip"
+  },
+  "author": "monkingxue",
+  "license": "MIT",
+  "dependencies": {}
+}
