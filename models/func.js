@@ -14,8 +14,12 @@ function errorRes (message) {
     const {module, method, param = []} = JSON.parse(input)
     const result = await db[module][method](...param)
 
+    if (result === null) {
+      return errorRes('Database operate fail')
+    }
+
     let data
-    if (Array.isArray(result)) {
+    if (Array.isArray(result) && result[0].get) {
       data = result.map(r => r.get({plain: true}))
     } else if (result.get) {
       data = result.get({plain: true})

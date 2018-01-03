@@ -26,7 +26,7 @@ function errorRes (message) {
     if (result.error) {
       return errorRes(result.error)
     }
-    console.log(result)
+    console.log(JSON.stringify(result))
 
   } catch (e) {
     errorRes(e.message)
