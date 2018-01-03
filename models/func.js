@@ -17,8 +17,10 @@ function errorRes (message) {
     let data
     if (Array.isArray(result)) {
       data = result.map(r => r.get({plain: true}))
-    } else {
+    } else if (typeof(data) === 'object') {
       data = result.get({plain: true})
+    } else {
+      data = result
     }
 
     console.log(JSON.stringify({data}))
