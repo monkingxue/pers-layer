@@ -1,24 +1,33 @@
 const fs = require('fs')
 const fetch = require('./vendor/fetch')
-const dbUrl = 'http://localhost:8080/r/persistent-layer/models'
+
+const dbUrl = `http://${process.env.SERVER_IP}:8080/r/persistent-layer/models`
+const moduleName = 'User'
 
 function errorRes (message) {
-  return console.error({error: 'User/Create: ' + message})
+  return console.log(JSON.stringify({error: moduleName + '/Create: ' + message}))
 }
 
 (async () => {
   try {
     const input = fs.readFileSync('/dev/stdin').toString()
-    const param = JSON.parse(input)
-    if (!param) {
+    if (!input) {
       return errorRes('No param is detected.')
     }
-    const reqBody = {module: 'User', method: 'create', param: [param]}
-    const result = await fetch(dbUrl, {method: 'POST', body: reqBody})
+    const param = JSON.parse(input)
+
+    const reqBody = {module: moduleName, method: 'create', param: [param]}
+    const res = await fetch(dbUrl, {
+      method: 'POST',
+      body: JSON.stringify(reqBody),
+    })
+    const result = await res.json()
+
     if (result.error) {
       return errorRes(result.error)
     }
-    console.log({result})
+    console.log(result)
+
   } catch (e) {
     errorRes(e.message)
   }

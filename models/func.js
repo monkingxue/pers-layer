@@ -17,7 +17,7 @@ function errorRes (message) {
     let data
     if (Array.isArray(result)) {
       data = result.map(r => r.get({plain: true}))
-    } else if (typeof(data) === 'object') {
+    } else if (result.get) {
       data = result.get({plain: true})
     } else {
       data = result
