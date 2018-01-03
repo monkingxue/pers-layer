@@ -12,12 +12,14 @@ function errorRes (message) {
   try {
     const input = fs.readFileSync('/dev/stdin').toString()
 
-    let constraint = {}, method = ''
+    let constraint = {}, method = 'findAll'
     if (input) {
-      constraint = {where: JSON.parse(input)}
       method = 'findOne'
-    } else {
-      method = 'findAll'
+      const req = JSON.parse(input)
+      constraint = {where: req.cond}
+      if (req.type === 'all') {
+        method = 'findAll'
+      }
     }
 
     const reqBody = {module: moduleName, method, param: [constraint]}
