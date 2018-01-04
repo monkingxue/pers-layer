@@ -13,7 +13,7 @@ const errorRes = baseErrorLog('create')
       const req = JSON.parse(input)
       param.push(req.values, {where: req.cond})
     } else {
-      return errorRes('Must have input')
+      return errorRes('No param is detected')
     }
 
     const reqBody = {module: modelName, method: 'update', param}

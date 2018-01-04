@@ -7,9 +7,12 @@ const errorRes = baseErrorLog('delete')
 ;(async () => {
   try {
     const input = fs.readFileSync('/dev/stdin').toString()
-    const constraint = {where: JSON.parse(input)}
+    if (!input) {
+      return errorRes('No param is detected')
+    }
+    const param = {where: JSON.parse(input)}
 
-    const reqBody = {module: modelName, method: 'destroy', param: [constraint]}
+    const reqBody = {module: modelName, method: 'destroy', param: [param]}
     const res = await fetch(dbUrl, {
       method: 'POST',
       body: JSON.stringify(reqBody),
@@ -18,7 +21,7 @@ const errorRes = baseErrorLog('delete')
 
     if (result.error) {
       return errorRes(result.error)
-    } else if(result.data === 0) {
+    } else if (result.data === 0) {
       return errorRes('Delete fail')
     }
     console.log(JSON.stringify(result))

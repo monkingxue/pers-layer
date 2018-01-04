@@ -8,7 +8,7 @@ const errorRes = baseErrorLog('create')
   try {
     const input = fs.readFileSync('/dev/stdin').toString()
     if (!input) {
-      return errorRes('No param is detected.')
+      return errorRes('No param is detected')
     }
     const param = JSON.parse(input)
 
