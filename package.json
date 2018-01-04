@@ -10,10 +10,11 @@
     "server": "echo 'FN_DB_URL=mysql://yy:password@tcp('$(cat .ip.env)':3306)/database' > .server.env && fn_mac start --env-file .server.env",
     "ui": "docker run --rm -it --link fnserver:api -p 4000:4000 -e FN_API_URL=http://api:8080 -d fnproject/ui",
     "set-config": "./config.sh",
-    "dev": "npm run set-config && fn_mac deploy --all --local",
+    "dev": "npm run set-config && npm run bundle:gen && fn_mac deploy --all --local",
     "deploy": "npm run set-config && fn_mac deploy --all --registry monkingxue",
     "bundle:gen": "node utils/rollupBundle.js",
     "bundle:rm": "find . -name 'bundle.js' -delete",
+    "orm": "node utils/genORM.js && npm run bundle:gen",
     "test": "npm run db:ip"
   },
   "author": "monkingxue",

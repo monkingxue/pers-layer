@@ -1,7 +1,9 @@
 const fs = require('fs')
-const path = require('path')
+const promisify = require('util').promisify
+const {join} = require('path')
 
-const {modelNames} = require('./modelNames')
+// const {modelNames} = require('./modelNames')
+const modelNames = ['user']
 
 const getCommonJS = (modelName) => {
   return 'const dbUrl = `http://${process.env.SERVER_IP}:8080/r/persistent-layer/models`\n' +
@@ -21,7 +23,10 @@ const getCommonJS = (modelName) => {
 const getYAML = () => {
   return 'version: 0.0.1\n' +
     'runtime: node\n' +
-    'entrypoint: node bundle.js'
+    'entrypoint: node bundle.js\n' +
+    'headers:\n' +
+    '  content-type:\n' +
+    '  - application/json'
 }
 
 const getCodeHead = (op) => {
@@ -47,7 +52,7 @@ const getCodeTail = () => {
 }
 
 const template = {
-  count : () => {
+  count: () => {
     return '    let constraint = {}\n' +
       '    if (input) {\n' +
       '      constraint = {where: JSON.parse(input)}\n' +
@@ -65,7 +70,7 @@ const template = {
       '    }\n'
   },
 
-  create : () => {
+  create: () => {
     return '    if (!input) {\n' +
       '      return errorRes(\'No param is detected.\')\n' +
       '    }\n' +
@@ -83,7 +88,7 @@ const template = {
       '    }\n'
   },
 
-  delete : () => {
+  delete: () => {
     return '    if (!input) {\n' +
       '      return errorRes(\'No param is detected.\')\n' +
       '    }\n' +
@@ -103,7 +108,7 @@ const template = {
       '    }\n'
   },
 
-  find : () => {
+  find: () => {
     return '    let constraint = {}, method = \'findAll\'\n' +
       '    if (input) {\n' +
       '      method = \'findOne\'\n' +
@@ -126,7 +131,7 @@ const template = {
       '    }\n'
   },
 
-  update : () => {
+  update: () => {
     return '    let param = []\n' +
       '    if (input) {\n' +
       '      const req = JSON.parse(input)\n' +
@@ -150,35 +155,38 @@ const template = {
   },
 }
 
-
-const deleteFolder = function (folderPath) {
+const deleteFolderSync = function (folderPath) {
   if (!fs.existsSync(folderPath)) {
     return
   }
 
   fs.readdirSync(folderPath).forEach(file => {
-    const curPath = path.join(folderPath, file)
+    const curPath = join(folderPath, file)
     if (fs.lstatSync(curPath).isDirectory()) {
-      deleteFolder(curPath)
-    } else { // delete file
+      deleteFolderSync(curPath)
+    } else {
       fs.unlinkSync(curPath)
     }
   })
-  fs.rmdirSync(path)
+  fs.rmdirSync(folderPath)
 }
 
 const projectPath = process.cwd()
-const ops = ['count', 'create', 'delete', 'find', 'update']
+const writeFile = promisify(fs.writeFile)
+const mkdir = promisify(fs.mkdir)
 
-modelNames.forEach(async modelName => {
-  const ORMPath = path.join(projectPath, modelName)
-  deleteFolder(ORMPath)
+modelNames.forEach(async model => {
+  const ORMPath = join(projectPath, model)
+  deleteFolderSync(ORMPath)
   fs.mkdirSync(ORMPath)
-  fs.writeFile('common.js', getCommonJS(modelName))
-  ops.forEach(async op => {
-    await fs.mkdir(op)
-    const code = getCodeHead(op) + template[op] + getCodeTail()
-    fs.writeFile('func.js', code)
-    fs.writeFile('func.yaml', getYAML())
+
+  const firstCharUpper = str => str.charAt(0).toUpperCase() + str.slice(1)
+  writeFile(join(ORMPath, 'common.js'), getCommonJS(firstCharUpper(model)))
+  Object.keys(template).forEach(async op => {
+    const opPath = join(ORMPath, op)
+    await mkdir(opPath)
+    const code = getCodeHead(firstCharUpper(op)) + template[op]() + getCodeTail()
+    writeFile(join(opPath, 'func.js'), code)
+    writeFile(join(opPath, 'func.yaml'), getYAML())
   })
 })
