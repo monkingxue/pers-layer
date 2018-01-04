@@ -2,7 +2,7 @@ const fs = require('fs')
 const fetch = require('node-fetch')
 
 const {dbUrl, modelName, baseErrorLog} = require('../common')
-const errorRes = baseErrorLog('create')
+const errorRes = baseErrorLog('delete')
 
 ;(async () => {
   try {
