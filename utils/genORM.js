@@ -2,8 +2,7 @@ const fs = require('fs')
 const promisify = require('util').promisify
 const {join} = require('path')
 
-// const {modelNames} = require('./modelNames')
-const modelNames = ['user']
+const {modelNames} = require('./modelNames')
 
 const getCommonJS = (modelName) => {
   return 'const dbUrl = `http://${process.env.SERVER_IP}:8080/r/persistent-layer/models`\n' +
@@ -13,9 +12,19 @@ const getCommonJS = (modelName) => {
     '  return (message) => console.log(JSON.stringify({error: modelName + `/${opName}: ` + message}))\n' +
     '}\n' +
     '\n' +
+    'function hasInput (input) {\n' +
+    '  try {\n' +
+    '    const json = JSON.parse(input)\n' +
+    '    return JSON.stringify(json) !== \'{}\'\n' +
+    '  } catch(e) {\n' +
+    '    return false\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
     'module.exports = {\n' +
     '  dbUrl,\n' +
     '  modelName,\n' +
+    '  hasInput,\n' +
     '  baseErrorLog,\n' +
     '}'
 }
@@ -33,7 +42,7 @@ const getCodeHead = (op) => {
   return 'const fs = require(\'fs\')\n' +
     'const fetch = require(\'node-fetch\')\n' +
     '\n' +
-    'const {dbUrl, modelName, baseErrorLog} = require(\'../common\')\n' +
+    'const {dbUrl, modelName, hasInput, baseErrorLog} = require(\'../common\')\n' +
     'const errorRes = baseErrorLog(\'' + op + '\')\n' +
     '\n' +
     ';(async () => {\n' +
@@ -54,7 +63,7 @@ const getCodeTail = () => {
 const template = {
   count: () => {
     return '    let constraint = {}\n' +
-      '    if (input) {\n' +
+      '    if (hasInput(input)) {\n' +
       '      constraint = {where: JSON.parse(input)}\n' +
       '    }\n' +
       '\n' +
@@ -71,7 +80,7 @@ const template = {
   },
 
   create: () => {
-    return '    if (!input) {\n' +
+    return '    if (!hasInput(input)) {\n' +
       '      return errorRes(\'No param is detected.\')\n' +
       '    }\n' +
       '    const param = JSON.parse(input)\n' +
@@ -89,7 +98,7 @@ const template = {
   },
 
   delete: () => {
-    return '    if (!input) {\n' +
+    return '    if (!hasInput(input)) {\n' +
       '      return errorRes(\'No param is detected.\')\n' +
       '    }\n' +
       '    const param = {where: JSON.parse(input)}\n' +
@@ -110,9 +119,14 @@ const template = {
 
   find: () => {
     return '    let constraint = {}, method = \'findAll\'\n' +
-      '    if (input) {\n' +
+      '    if (hasInput(input)) {\n' +
       '      method = \'findOne\'\n' +
       '      const req = JSON.parse(input)\n' +
+      '\n' +
+      '      if(!req.cond) {\n' +
+      '        return errorRes(\'Must have cond field\')\n' +
+      '      }\n' +
+      '\n' +
       '      constraint = {where: req.cond}\n' +
       '      if (req.type === \'all\') {\n' +
       '        method = \'findAll\'\n' +
@@ -133,12 +147,15 @@ const template = {
 
   update: () => {
     return '    let param = []\n' +
-      '    if (input) {\n' +
-      '      const req = JSON.parse(input)\n' +
-      '      param.push(req.values, {where: req.cond})\n' +
-      '    } else {\n' +
+      '    if (!hasInput(input)) {\n' +
       '      return errorRes(\'No param is detected\')\n' +
       '    }\n' +
+      '\n' +
+      '    const req = JSON.parse(input)\n' +
+      '    if(!(req.values && req.cond)) {\n' +
+      '      return errorRes(\'Must have values and cond field\')\n' +
+      '    }\n' +
+      '    param.push(req.values, {where: req.cond})\n' +
       '\n' +
       '    const reqBody = {module: modelName, method: \'update\', param}\n' +
       '    const res = await fetch(dbUrl, {\n' +
@@ -176,7 +193,8 @@ const writeFile = promisify(fs.writeFile)
 const mkdir = promisify(fs.mkdir)
 
 modelNames.forEach(async model => {
-  const ORMPath = join(projectPath, model)
+  const deployName = model.toLowerCase()
+  const ORMPath = join(projectPath, deployName)
   deleteFolderSync(ORMPath)
   fs.mkdirSync(ORMPath)
 

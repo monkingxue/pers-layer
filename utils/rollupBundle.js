@@ -7,18 +7,7 @@ const rollup = require('rollup')
 const commonjs = require('rollup-plugin-commonjs')
 const resolve = require('rollup-plugin-node-resolve')
 
-const modelsPath = path.join(process.cwd(), 'models')
-const reservedFile = ['db.js', 'func.js']
-// const modelNames = fs
-//   .readdirSync(modelsPath)
-//   .filter(
-//     file =>
-//       file.indexOf('.') !== 0 &&
-//       !reservedFile.includes(file) &&
-//       file.slice(-3) === '.js',
-//   )
-//   .map(file => file.slice(0, -3))
-const modelNames = ['user']
+const {modelNames} = require('./modelNames')
 
 async function build (input, output) {
   const bundle = await rollup.rollup(input)
