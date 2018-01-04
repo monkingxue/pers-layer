@@ -12,9 +12,18 @@
     "set-config": "./config.sh",
     "dev": "npm run set-config && fn_mac deploy --all --local",
     "deploy": "npm run set-config && fn_mac deploy --all --registry monkingxue",
+    "bundle:gen": "node utils/rollupBundle.js",
+    "bundle:rm": "find . -name 'bundle.js' -delete",
     "test": "npm run db:ip"
   },
   "author": "monkingxue",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "node-fetch": "^2.0.0-alpha.9"
+  },
+  "devDependencies": {
+    "rollup": "^0.53.3",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  }
 }
