@@ -1,14 +1,10 @@
 const fs = require('fs')
-const fetch = require('./vendor/fetch')
+const fetch = require('node-fetch')
 
-const dbUrl = `http://${process.env.SERVER_IP}:8080/r/persistent-layer/models`
-const moduleName = 'User'
+const {dbUrl, modelName, baseErrorLog} = require('../common')
+const errorRes = baseErrorLog('find')
 
-function errorRes (message) {
-  return console.log(JSON.stringify({error: moduleName + '/Find: ' + message}))
-}
-
-(async () => {
+;(async () => {
   try {
     const input = fs.readFileSync('/dev/stdin').toString()
 
@@ -22,7 +18,7 @@ function errorRes (message) {
       }
     }
 
-    const reqBody = {module: moduleName, method, param: [constraint]}
+    const reqBody = {module: modelName, method, param: [constraint]}
     const res = await fetch(dbUrl, {
       method: 'POST',
       body: JSON.stringify(reqBody),

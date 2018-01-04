@@ -20,16 +20,9 @@ const reservedFile = ['db.js', 'func.js']
 //   .map(file => file.slice(0, -3))
 const modelNames = ['user']
 
-async function build (inputOptions, outputOptions) {
-
-  // create a bundle
-  const bundle = await rollup.rollup(inputOptions)
-  //
-  // // generate code and a sourcemap
-  // const {code, map} = await bundle.generate(outputOptions)
-
-  // or write the bundle to disk
-  await bundle.write(outputOptions)
+async function build (input, output) {
+  const bundle = await rollup.rollup(input)
+  await bundle.write(output)
 }
 
 modelNames.forEach((model) => {
@@ -38,11 +31,18 @@ modelNames.forEach((model) => {
     .forEach(async opName => {
       const opDir = path.join(modelDir, opName)
       const inputFile = path.join(opDir, 'func.js')
-      const outputFile = path.join(opDir, 'bundles.js')
+      const outputFile = path.join(opDir, 'bundle.js')
 
+      if (fs.lstatSync(opDir).isFile()) {
+        return
+      }
+
+      if (fs.existsSync(outputFile)) {
+        fs.unlinkSync(outputFile)
+      }
       const inputOptions = {
         input: inputFile,
-        // external: ['fs', 'stream', 'encoding', 'http', 'url', 'https', 'zlib'],
+        external: ['fs', 'stream', 'http', 'url', 'https', 'zlib', 'util', 'path'],
         plugins: [resolve({preferBuiltins: true}), commonjs()],
       }
       const outputOptions = {
