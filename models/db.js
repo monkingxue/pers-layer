@@ -48,5 +48,6 @@ module.exports = async function genDB (DB_IP) {
   db.sequelize = sequelize
   db.Sequelize = Sequelize
 
+  await db.sequelize.sync()
   return db
 }
