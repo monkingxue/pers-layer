@@ -7,10 +7,10 @@ const rollup = require('rollup')
 const commonjs = require('rollup-plugin-commonjs')
 const resolve = require('rollup-plugin-node-resolve')
 
-const modelPath = path.join(process.cwd(), 'models')
+const modelsPath = path.join(process.cwd(), 'models')
 const reservedFile = ['db.js', 'func.js']
 // const modelNames = fs
-//   .readdirSync(modelPath)
+//   .readdirSync(modelsPath)
 //   .filter(
 //     file =>
 //       file.indexOf('.') !== 0 &&
