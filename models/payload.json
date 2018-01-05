@@ -1,5 +1,5 @@
 {
   "module": "User",
   "method": "findAll",
-  "param": [null]
+  "param": [{}]
 }

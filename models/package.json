@@ -1,15 +1,15 @@
 {
   "name": "models",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "db.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "monkingxue",
   "license": "MIT",
   "dependencies": {
     "mysql2": "^1.5.1",
-    "sequelize": "^4.28.6"
+    "sequelize": "^4.29.0"
   }
 }

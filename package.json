@@ -12,7 +12,7 @@
     "set-config": "./config.sh",
     "dev": "npm run set-config && npm run bundle:gen && fn_mac deploy --all --local",
     "deploy": "npm run set-config && fn_mac deploy --all --registry monkingxue",
-    "bundle:gen": "node utils/rollupBundle.js",
+    "bundle:gen": "node utils/rollup/bundles.js",
     "bundle:rm": "find . -name 'bundle.js' -delete",
     "orm": "node utils/genORM.js && npm run bundle:gen",
     "test": "npm run db:ip"
@@ -20,11 +20,15 @@
   "author": "monkingxue",
   "license": "MIT",
   "dependencies": {
-    "node-fetch": "^2.0.0-alpha.9"
+    "mysql2": "^1.5.1",
+    "node-fetch": "^2.0.0-alpha.9",
+    "sequelize": "^4.28.7"
   },
   "devDependencies": {
+    "builtin-modules": "^2.0.0",
     "rollup": "^0.53.3",
     "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.0.0"
   }
 }
