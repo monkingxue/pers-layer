@@ -7,10 +7,10 @@ module.exports = (sequelize, DataTypes) => {
     job: DataTypes.STRING(40),
     website: DataTypes.STRING(40),
     avatar: DataTypes.STRING,
-    birthday: DataTypes.DATE
+    birthday: DataTypes.DATE,
   })
 
-  UserInfo.associate = ({ User, UserInfo }) => {
+  UserInfo.associate = ({User, UserInfo}) => {
     UserInfo.belongsTo(User)
   }
 
