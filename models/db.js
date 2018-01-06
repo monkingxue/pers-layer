@@ -24,30 +24,36 @@ module.exports = async function genDB (DB_IP) {
     config.options,
   )
 
-  const reservedFile = [basename, 'func.js']
+  const reservedFile = [basename, 'func.js', 'joinTables.js', 'common.js']
 
-  fs
-    .readdirSync(__dirname)
-    .filter(
-      file =>
-        file.indexOf('.') !== 0 &&
-        !reservedFile.includes(file) &&
-        file.slice(-3) === '.js',
-    )
-    .forEach(file => {
-      const model = sequelize['import'](path.join(__dirname, file))
-      db[model.name] = model
+  try {
+    fs
+      .readdirSync(__dirname)
+      .filter(
+        file =>
+          file.indexOf('.') !== 0 &&
+          !reservedFile.includes(file) &&
+          file.slice(-3) === '.js',
+      )
+      .forEach(file => {
+        const model = sequelize['import'](path.join(__dirname, file))
+        db[model.name] = model
+      })
+
+    Object.keys(db).forEach(modelName => {
+      if (db[modelName].associate) {
+        db[modelName].associate(db)
+      }
     })
 
-  Object.keys(db).forEach(modelName => {
-    if (db[modelName].associate) {
-      db[modelName].associate(db)
-    }
-  })
+    db.sequelize = sequelize
+    db.Sequelize = Sequelize
 
-  db.sequelize = sequelize
-  db.Sequelize = Sequelize
+    await db.sequelize.sync()
+  } catch (e) {
+    console.error(e)
+    sequelize.close()
+  }
 
-  await db.sequelize.sync()
   return db
 }

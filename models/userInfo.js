@@ -1,7 +1,9 @@
+const {foreignKeyConfig} = require('./common')
+
 module.exports = (sequelize, DataTypes) => {
   let UserInfo = sequelize.define('UserInfo', {
     name: DataTypes.STRING(20),
-    address: DataTypes.STRING(20),
+    address: DataTypes.STRING(40),
     gender: DataTypes.BOOLEAN,
     phoneNumber: DataTypes.STRING(20),
     job: DataTypes.STRING(40),
