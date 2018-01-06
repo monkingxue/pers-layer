@@ -14,7 +14,8 @@
     "deploy": "npm run set-config && fn_mac deploy --all --registry monkingxue",
     "bundle:gen": "node utils/rollup/bundles.js",
     "bundle:rm": "find . -name 'bundle.js' -delete",
-    "orm": "node utils/genORM.js && npm run bundle:gen",
+    "orm:gen": "node utils/genORM.js && npm run bundle:gen",
+    "orm:rm": "node utils/deleteORM.js",
     "test": "npm run db:ip"
   },
   "author": "monkingxue",

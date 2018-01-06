@@ -3,6 +3,7 @@ const promisify = require('util').promisify
 const {join} = require('path')
 
 const {modelNames} = require('./modelNames')
+const deleteFolderSync = require('./deleteFolderSync')
 
 const getCommonJS = (modelName) => {
   return 'const dbUrl = `http://${process.env.SERVER_IP}:8080/r/persistent-layer/models`\n' +
@@ -172,21 +173,6 @@ const template = {
   },
 }
 
-const deleteFolderSync = function (folderPath) {
-  if (!fs.existsSync(folderPath)) {
-    return
-  }
-
-  fs.readdirSync(folderPath).forEach(file => {
-    const curPath = join(folderPath, file)
-    if (fs.lstatSync(curPath).isDirectory()) {
-      deleteFolderSync(curPath)
-    } else {
-      fs.unlinkSync(curPath)
-    }
-  })
-  fs.rmdirSync(folderPath)
-}
 
 const projectPath = process.cwd()
 const writeFile = promisify(fs.writeFile)
