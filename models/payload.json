@@ -1,5 +1,5 @@
 {
-  "module": "User",
+  "module": "Project_User",
   "method": "findAll",
   "param": [{}]
 }

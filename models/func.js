@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const genDB = require('./db')
+const genDB = require('./dbHandle')
 
 function errorRes (message) {
   return console.log(JSON.stringify({error: 'Models: ' + message}))
@@ -9,12 +9,12 @@ function errorRes (message) {
 (async () => {
   let db
   try {
-    db = await genDB(process.env.DB_IP)
     const input = fs.readFileSync('/dev/stdin').toString()
     const {module, method, param = []} = JSON.parse(input)
     if(!(module && method)) {
       errorRes('Must have module and method')
     }
+    db = await genDB(module, process.env.DB_IP)
     const result = await db[module][method](...param)
 
     if (result == null) {

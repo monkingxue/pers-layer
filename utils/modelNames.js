@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 
 const modelsPath = path.join(process.cwd(), 'models')
-const reservedFile = ['db.js', 'func.js', 'common.js']
+const reservedFile = ['db.js', 'dbHandle.js', 'func.js', 'common.js']
 const modelNames = fs
   .readdirSync(modelsPath)
   .filter(
