@@ -99,12 +99,12 @@ const template = {
   },
 
   delete: () => {
-    return '    if (!hasInput(input)) {\n' +
-      '      return errorRes(\'No param is detected.\')\n' +
+    return '    let param = {}\n' +
+      '    if (hasInput(input)) {\n' +
+      '      param = JSON.parse(input)\n' +
       '    }\n' +
-      '    const param = {where: JSON.parse(input)}\n' +
       '\n' +
-      '    const reqBody = {module: modelName, method: \'destroy\', param: [param]}\n' +
+      '    const reqBody = {module: modelName, method: \'destroy\', param: [{where: param}]}\n' +
       '    const res = await fetch(dbUrl, {\n' +
       '      method: \'POST\',\n' +
       '      body: JSON.stringify(reqBody),\n' +
@@ -113,8 +113,6 @@ const template = {
       '\n' +
       '    if (result.error) {\n' +
       '      return errorRes(result.error)\n' +
-      '    } else if (result.data === 0) {\n' +
-      '      return errorRes(\'Delete fail\')\n' +
       '    }\n'
   },
 
@@ -153,10 +151,12 @@ const template = {
       '    }\n' +
       '\n' +
       '    const req = JSON.parse(input)\n' +
-      '    if(!(req.values && req.cond)) {\n' +
-      '      return errorRes(\'Must have values and cond field\')\n' +
+      '    if(!req.id) {\n' +
+      '      return errorRes(\'Must have id\')\n' +
       '    }\n' +
-      '    param.push(req.values, {where: req.cond})\n' +
+      '    const id = req.id\n' +
+      '    delete req.id\n' +
+      '    param.push(req, {where: {id}})\n' +
       '\n' +
       '    const reqBody = {module: modelName, method: \'update\', param}\n' +
       '    const res = await fetch(dbUrl, {\n' +
@@ -172,7 +172,6 @@ const template = {
       '    }\n'
   },
 }
-
 
 const projectPath = process.cwd()
 const writeFile = promisify(fs.writeFile)
