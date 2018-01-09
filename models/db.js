@@ -3,7 +3,7 @@ const path = require('path')
 const Sequelize = require('sequelize')
 const basename = path.basename(__filename)
 
-module.exports = async function genDB (model, DB_IP) {
+module.exports = async function genDB (isSync, DB_IP) {
   const config = {
     database: 'database',
     username: 'yy',
@@ -21,7 +21,6 @@ module.exports = async function genDB (model, DB_IP) {
     config.password,
     config.options,
   )
-
 
   const reservedFile = [basename, 'func.js', 'dbHandle.js', 'common.js']
   const db = {}
@@ -49,7 +48,9 @@ module.exports = async function genDB (model, DB_IP) {
     db.sequelize = sequelize
     db.Sequelize = Sequelize
 
-    await db.sequelize.sync({force: true})
+    if (isSync) {
+      await db.sequelize.sync({force: true})
+    }
   } catch (e) {
     console.error(e)
     sequelize.close()

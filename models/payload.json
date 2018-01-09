@@ -1,5 +1,10 @@
 {
-  "module": "Project_User",
-  "method": "findAll",
-  "param": [{}]
+  "module": "UserInfo",
+  "method": "create",
+  "param": [{
+    "name": "qige",
+    "gender": true,
+    "job": "student",
+    "UserId": "1"
+  }]
 }

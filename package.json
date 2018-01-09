@@ -13,6 +13,7 @@
     "dev": "npm run set-config && npm run orm:gen && fn_mac deploy --all --local && npm run orm:rm",
     "deploy": "npm run set-config && fn_mac deploy --all --registry monkingxue",
     "deploy:db": "npm run set-config && fn_mac deploy models --local",
+    "deploy:reset": "echo '{}' | fn_mac run models -e SYNC=true -e DB_IP=$(cat .ip.env)",
     "bundle:gen": "node utils/rollup/bundles.js",
     "bundle:rm": "find . -name 'bundle.js' -delete",
     "orm:gen": "node utils/genORM.js && npm run bundle:gen",
