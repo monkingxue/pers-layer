@@ -1,7 +1,8 @@
 const {foreignKeyConfig} = require('./common')
 
-module.exports = (sequelize, DataTypes) => {
-  let Subtask = sequelize.define('Subtask', {
+const name = 'Subtask'
+const fnModel = (sequelize, DataTypes) => {
+  let Subtask = sequelize.define(name, {
     content: {
       allowNull: false,
       type: DataTypes.STRING(80),
@@ -15,4 +16,8 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   return Subtask
+}
+
+module.exports = {
+  name, fnModel,
 }

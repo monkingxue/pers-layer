@@ -1,7 +1,8 @@
 const {foreignKeyConfig} = require('./common')
 
-module.exports = (sequelize, DataTypes) => {
-  let Comment = sequelize.define('Comment', {
+const name = 'Comment'
+const fnModel = (sequelize, DataTypes) => {
+  let Comment = sequelize.define(name, {
     content: {
       allowNull: false,
       type: DataTypes.STRING(100),
@@ -17,4 +18,8 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   return Comment
+}
+
+module.exports = {
+  name, fnModel,
 }

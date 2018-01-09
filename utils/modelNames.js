@@ -4,10 +4,8 @@
 const fs = require('fs')
 const path = require('path')
 
-const joinPathes = Object.keys(require('../models/joinTables'))
-
 const modelsPath = path.join(process.cwd(), 'models')
-const reservedFile = ['db.js', 'func.js', 'joinTables.js', 'common.js']
+const reservedFile = ['db.js', 'func.js', 'common.js']
 const modelNames = fs
   .readdirSync(modelsPath)
   .filter(
@@ -16,8 +14,8 @@ const modelNames = fs
       !reservedFile.includes(file) &&
       file.slice(-3) === '.js',
   )
-  .map(file => file.slice(0, -3))
+  .map(file => require(path.join(modelsPath, file)).name)
 
 module.exports = {
-  modelNames: modelNames.concat(joinPathes),
+  modelNames,
 }

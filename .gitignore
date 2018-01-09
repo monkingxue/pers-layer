@@ -13,7 +13,7 @@
 /user/
 /userinfo/
 /userpermission/
-/projectuser/
-/scheduleuser/
-/taskfile/
-/taskuser/
+/project_user/
+/schedule_user/
+/task_file/
+/task_user/

@@ -1,8 +1,8 @@
-const {scheduleUser} = require('./joinTables')
 const {foreignKeyConfig} = require('./common')
 
-module.exports = (sequelize, DataTypes) => {
-  let Schedule = sequelize.define('Schedule', {
+const name = 'Schedule'
+const fnModel = (sequelize, DataTypes) => {
+  let Schedule = sequelize.define(name, {
     name: {
       allowNull: false,
       type: DataTypes.STRING(20),
@@ -21,7 +21,10 @@ module.exports = (sequelize, DataTypes) => {
   Schedule.associate = ({Schedule, Project, User}) => {
     Schedule.belongsTo(Project, foreignKeyConfig)
     Schedule.belongsTo(User, {as: 'Owner', ...foreignKeyConfig})
-    Schedule.belongsToMany(User, {through: scheduleUser})
   }
   return Schedule
+}
+
+module.exports = {
+  name, fnModel,
 }

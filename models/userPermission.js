@@ -1,10 +1,10 @@
 const {foreignKeyConfig} = require('./common')
 
-module.exports = (sequelize, DataTypes) => {
-  let UserPermission = sequelize.define('UserPermission', {
+const name = 'UserPermission'
+const fnModel = (sequelize, DataTypes) => {
+  let UserPermission = sequelize.define(name, {
     /* Permission
      * [Required]
-     * public Permission Permission { get; set; }
      */
   })
 
@@ -15,4 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 
   return UserPermission
 }
-  
+
+module.exports = {
+  name, fnModel,
+}

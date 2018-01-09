@@ -15,8 +15,6 @@ module.exports = async function genDB (DB_IP) {
     },
   }
 
-  const db = {}
-
   const sequelize = new Sequelize(
     config.database,
     config.username,
@@ -24,7 +22,8 @@ module.exports = async function genDB (DB_IP) {
     config.options,
   )
 
-  const reservedFile = [basename, 'func.js', 'joinTables.js', 'common.js']
+  const reservedFile = [basename, 'func.js', 'common.js']
+  const db = {}
 
   try {
     fs
@@ -36,8 +35,8 @@ module.exports = async function genDB (DB_IP) {
           file.slice(-3) === '.js',
       )
       .forEach(file => {
-        const model = sequelize['import'](path.join(__dirname, file))
-        db[model.name] = model
+        const {name, fnModel} = require(path.join(__dirname, file))
+        db[name] = fnModel(sequelize, Sequelize.DataTypes)
       })
 
     Object.keys(db).forEach(modelName => {
@@ -49,7 +48,7 @@ module.exports = async function genDB (DB_IP) {
     db.sequelize = sequelize
     db.Sequelize = Sequelize
 
-    await db.sequelize.sync()
+    // await db.sequelize.sync({force: true})
   } catch (e) {
     console.error(e)
     sequelize.close()

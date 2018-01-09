@@ -1,8 +1,8 @@
-const {taskFile} = require('./joinTables')
 const {foreignKeyConfig} = require('./common')
 
-module.exports = (sequelize, DataTypes) => {
-  let File = sequelize.define('File', {
+const name = 'File'
+const fnModel = (sequelize, DataTypes) => {
+  let File = sequelize.define(name, {
     name: {
       allowNull: false,
       type: DataTypes.STRING(40),
@@ -19,8 +19,11 @@ module.exports = (sequelize, DataTypes) => {
     File.belongsTo(User, foreignKeyConfig)
     File.belongsTo(Project, foreignKeyConfig)
 
-    File.belongsToMany(Task, {through: taskFile})
   }
 
   return File
+}
+
+module.exports = {
+  name, fnModel,
 }

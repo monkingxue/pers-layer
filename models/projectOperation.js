@@ -1,6 +1,7 @@
 const {foreignKeyConfig} = require('./common')
 
-module.exports = (sequelize, DataTypes) => {
+const name = 'ProjectOperation'
+const fnModel = (sequelize, DataTypes) => {
   let ProjectOperation = sequelize.define('ProjectOperation', {
     time: DataTypes.DATE,
     content: {
@@ -15,5 +16,9 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   return ProjectOperation
+}
+
+module.exports = {
+  name, fnModel,
 }
   

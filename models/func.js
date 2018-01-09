@@ -12,6 +12,9 @@ function errorRes (message) {
     db = await genDB(process.env.DB_IP)
     const input = fs.readFileSync('/dev/stdin').toString()
     const {module, method, param = []} = JSON.parse(input)
+    if(!(module && method)) {
+      errorRes('Must have module and method')
+    }
     const result = await db[module][method](...param)
 
     if (result == null) {

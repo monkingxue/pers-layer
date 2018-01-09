@@ -184,7 +184,7 @@ modelNames.forEach(async model => {
   fs.mkdirSync(ORMPath)
 
   const firstCharUpper = str => str.charAt(0).toUpperCase() + str.slice(1)
-  writeFile(join(ORMPath, 'common.js'), getCommonJS(firstCharUpper(model)))
+  writeFile(join(ORMPath, 'common.js'), getCommonJS(model))
   Object.keys(template).forEach(async op => {
     const opPath = join(ORMPath, op)
     await mkdir(opPath)

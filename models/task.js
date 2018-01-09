@@ -1,8 +1,8 @@
-const {taskUser, taskFile} = require('./joinTables')
 const {foreignKeyConfig} = require('./common')
 
-module.exports = (sequelize, DataTypes) => {
-  let Task = sequelize.define('Task', {
+const name = 'Task'
+const fnModel = (sequelize, DataTypes) => {
+  let Task = sequelize.define(name, {
     name: {
       allowNull: false,
       type: DataTypes.STRING(20),
@@ -15,11 +15,9 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.BOOLEAN,
   })
 
-  Task.associate = ({Task, Progress, User, Comment, Subtask, TaskOperation, File}) => {
+  Task.associate = ({Task, Progress, User, Comment, Subtask, TaskOperation}) => {
     Task.belongsTo(Progress, foreignKeyConfig)
     Task.belongsTo(User, {as: 'Owner', ...foreignKeyConfig})
-    Task.belongsToMany(User, {through: taskUser})
-    Task.belongsToMany(File, {through: taskFile})
     Task.hasMany(Comment)
     Task.hasMany(Subtask)
     Task.hasMany(TaskOperation, foreignKeyConfig)
@@ -27,4 +25,7 @@ module.exports = (sequelize, DataTypes) => {
 
   return Task
 }
-  
+
+module.exports = {
+  name, fnModel,
+}
